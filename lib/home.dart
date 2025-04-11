@@ -1,16 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
   @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  late CameraPosition cameraPosition;
+
+  CameraTargetBounds cameraTargetBounds = CameraTargetBounds(
+    LatLngBounds(
+      northeast: const LatLng(30.120558505675778, 31.31808364739569),
+      southwest: const LatLng(30.107614649251147, 31.29316734517162),
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    cameraPosition = const CameraPosition(
+      zoom: 15.0,
+      target: LatLng(30.11409771124938, 31.308710840796778),
+    );
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: LatLng(31, 41),
-        ),
+        cameraTargetBounds: cameraTargetBounds,
+        initialCameraPosition: cameraPosition,
       ),
     );
   }
