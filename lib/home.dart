@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'model/place_model.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
 
@@ -11,7 +13,10 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late CameraPosition cameraPosition;
 
-  late GoogleMapController googleMapController;
+  late GoogleMapController _googleMapController;
+  String? nightStyle;
+
+  Set<Marker> markers = {};
 
   CameraTargetBounds cameraTargetBounds = CameraTargetBounds(
     LatLngBounds(
@@ -20,27 +25,73 @@ class _HomeState extends State<Home> {
     ),
   );
 
+  List<PlaceModel> places = [
+    PlaceModel(
+      id: "1",
+      name: "Alphabet arabic academy",
+      postion: const LatLng(30.162044459866223, 31.62450563927859),
+    ),
+    PlaceModel(
+      id: "2",
+      name: "syana tech",
+      postion: const LatLng(30.16078301167607, 31.62501376459161),
+    ),
+    PlaceModel(
+      id: "3",
+      name: "أخصائي تخاطب",
+      postion: const LatLng(30.160591618126784, 31.622176312348625),
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    cameraPosition = const CameraPosition(
+      zoom: 2.0,
+      target: LatLng(30.11409771124938, 31.308710840796778),
+    );
+    initMapStyle();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initMarks();
+      setState(() {});
+      Future.delayed(
+        const Duration(seconds: 2),
+        () {
+          newLocation();
+          setState(() {});
+        },
+      );
+    });
+  }
+
   newLocation() {
-    googleMapController.animateCamera(
-      CameraUpdate.newLatLng(
-        const LatLng(30.116758354354467, 31.41720120394772),
-      ),
+    _googleMapController.animateCamera(
+      CameraUpdate.newLatLngZoom(places.first.postion, 15.0),
+      // CameraUpdate.newLatLng(
+      //   const LatLng(30.116758354354467, 31.41720120394772),
+      // ),
       // CameraUpdate.newCameraPosition(cameraPosition),
-      // CameraUpdate.newLatLngZoom(latLng, zoom),
       // CameraUpdate.zoomIn()
       // CameraUpdate.zoomOut()
     );
     setState(() {});
   }
 
-  @override
-  void initState() {
-    super.initState();
-    cameraPosition = const CameraPosition(
-      zoom: 15.0,
-      target: LatLng(30.11409771124938, 31.308710840796778),
-    );
+  initMapStyle() async {
+    nightStyle = await DefaultAssetBundle.of(context)
+        .loadString('assets/map_style.json');
+    // ignore: deprecated_member_use
+    // _googleMapController.setMapStyle(nightStyle); // controller لل init لانك كدا استخدمت و لازم نعمل onMapCreate اذا استخدمت الطريقة دي لازم تنده النافنكش كلها في ال
+
     setState(() {});
+  }
+
+  void initMarks() {
+    for (var i = 0; i < places.length; i++) {
+      markers.add(
+        Marker(markerId: MarkerId("$i"), position: places[i].postion),
+      );
+    }
   }
 
   @override
@@ -49,9 +100,10 @@ class _HomeState extends State<Home> {
       body: Stack(
         children: [
           GoogleMap(
+            markers: markers,
+            style: nightStyle,
             onMapCreated: (controller) {
-              googleMapController = controller;
-              setState(() {});
+              _googleMapController = controller;
             },
             // cameraTargetBounds: cameraTargetBounds,
             initialCameraPosition: cameraPosition,
