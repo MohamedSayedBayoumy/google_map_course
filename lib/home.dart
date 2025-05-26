@@ -89,7 +89,11 @@ class _HomeState extends State<Home> {
   void initMarks() {
     for (var i = 0; i < places.length; i++) {
       markers.add(
-        Marker(markerId: MarkerId("$i"), position: places[i].postion),
+        Marker(
+            markerId: MarkerId("$i"),
+            infoWindow:
+                InfoWindow(title: places[i].name, snippet: places[i].id),
+            position: places[i].postion),
       );
     }
   }
