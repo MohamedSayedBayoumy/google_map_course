@@ -101,29 +101,14 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          GoogleMap(
-            markers: markers,
-            style: nightStyle,
-            onMapCreated: (controller) {
-              _googleMapController = controller;
-            },
-            // cameraTargetBounds: cameraTargetBounds,
-            initialCameraPosition: cameraPosition,
-          ),
-          Positioned(
-            bottom: 10.0,
-            left: 20.0,
-            right: 20.0,
-            child: ElevatedButton(
-              onPressed: () {
-                newLocation();
-              },
-              child: const Text("New Location"),
-            ),
-          )
-        ],
+      body: GoogleMap(
+        markers: markers,
+        style: nightStyle,
+        onMapCreated: (controller) {
+          _googleMapController = controller;
+        },
+        // cameraTargetBounds: cameraTargetBounds,
+        initialCameraPosition: cameraPosition,
       ),
     );
   }
