@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'model/place_model.dart';
+
+import 'dart:ui' as ui;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -86,11 +89,32 @@ class _HomeState extends State<Home> {
     setState(() {});
   }
 
-  void initMarks() {
+  Future<Uint8List> getImage() async {
+    final image = await rootBundle.load("assets/pin.png");
+    final newImage = await ui.instantiateImageCodec(
+      image.buffer.asUint8List(),
+      targetHeight: 40,
+      // targetWidth: 40
+    );
+
+    final newImageDataAfterEdit = await newImage.getNextFrame();
+
+    final converNewImageDataAfterToDataByte = await newImageDataAfterEdit.image
+        .toByteData(format: ui.ImageByteFormat.png);
+
+    final unit8listOfNewImage =
+        converNewImageDataAfterToDataByte!.buffer.asUint8List();
+
+    return unit8listOfNewImage;
+  }
+
+  void initMarks() async {
+    final icon = BitmapDescriptor.bytes(await getImage());
     for (var i = 0; i < places.length; i++) {
       markers.add(
         Marker(
             markerId: MarkerId("$i"),
+            icon: icon,
             infoWindow:
                 InfoWindow(title: places[i].name, snippet: places[i].id),
             position: places[i].postion),
