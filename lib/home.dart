@@ -93,7 +93,7 @@ class _HomeState extends State<Home> {
     final image = await rootBundle.load("assets/pin.png");
     final newImage = await ui.instantiateImageCodec(
       image.buffer.asUint8List(),
-      targetHeight: 40,
+      targetHeight: 50,
       // targetWidth: 40
     );
 
@@ -109,7 +109,8 @@ class _HomeState extends State<Home> {
   }
 
   void initMarks() async {
-    final icon = BitmapDescriptor.bytes(await getImage());
+    // final icon = BitmapDescriptor.asset(ImageConfiguration(), "assets/pin.png"); //و تعدل عليها من اي موقع عشان تناسب التطبيق assets هتسخدم دي في حالة ان الصورة موجوده عندك في ال 
+    final icon = BitmapDescriptor.bytes(await getImage()); // في حال الصورة جايه من الباك انيد
     for (var i = 0; i < places.length; i++) {
       markers.add(
         Marker(
