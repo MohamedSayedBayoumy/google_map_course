@@ -21,6 +21,8 @@ class _HomeState extends State<Home> {
 
   Set<Marker> markers = {};
 
+  Set<Polyline> lines = {};
+
   CameraTargetBounds cameraTargetBounds = CameraTargetBounds(
     LatLngBounds(
       northeast: const LatLng(30.120558505675778, 31.31808364739569),
@@ -61,6 +63,7 @@ class _HomeState extends State<Home> {
         const Duration(seconds: 2),
         () {
           newLocation();
+          initLines();
           setState(() {});
         },
       );
@@ -93,7 +96,7 @@ class _HomeState extends State<Home> {
     final image = await rootBundle.load("assets/pin.png");
     final newImage = await ui.instantiateImageCodec(
       image.buffer.asUint8List(),
-      targetHeight: 50,
+      targetHeight: 40,
       // targetWidth: 40
     );
 
@@ -109,8 +112,9 @@ class _HomeState extends State<Home> {
   }
 
   void initMarks() async {
-    // final icon = BitmapDescriptor.asset(ImageConfiguration(), "assets/pin.png"); //و تعدل عليها من اي موقع عشان تناسب التطبيق assets هتسخدم دي في حالة ان الصورة موجوده عندك في ال 
-    final icon = BitmapDescriptor.bytes(await getImage()); // في حال الصورة جايه من الباك انيد
+    // final icon = BitmapDescriptor.asset(ImageConfiguration(), "assets/pin.png"); //و تعدل عليها من اي موقع عشان تناسب التطبيق assets هتسخدم دي في حالة ان الصورة موجوده عندك في ال
+    final icon = BitmapDescriptor.bytes(
+        await getImage()); // في حال الصورة جايه من الباك انيد
     for (var i = 0; i < places.length; i++) {
       markers.add(
         Marker(
@@ -123,10 +127,21 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void initLines() {
+    lines.add(
+      Polyline(
+        polylineId: const PolylineId("1"),
+        points: places.map((e) => e.postion).map((e) => e).toList(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
+        zoomControlsEnabled: false,
+        polylines: lines,
         markers: markers,
         style: nightStyle,
         onMapCreated: (controller) {
