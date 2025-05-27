@@ -23,6 +23,8 @@ class _HomeState extends State<Home> {
 
   Set<Polyline> lines = {};
 
+  Set<Polygon> polygons = {};
+
   CameraTargetBounds cameraTargetBounds = CameraTargetBounds(
     LatLngBounds(
       northeast: const LatLng(30.120558505675778, 31.31808364739569),
@@ -64,6 +66,7 @@ class _HomeState extends State<Home> {
         () {
           newLocation();
           initLines();
+          initPolygon();
           setState(() {});
         },
       );
@@ -131,7 +134,32 @@ class _HomeState extends State<Home> {
     lines.add(
       Polyline(
         polylineId: const PolylineId("1"),
+        startCap: Cap.roundCap,
+        width: 5,
         points: places.map((e) => e.postion).map((e) => e).toList(),
+      ),
+    );
+  }
+
+  void initPolygon() {
+    polygons.add(
+      Polygon(
+        polygonId: const PolygonId("1"),
+        points: const [
+          LatLng(30.17564569397183, 31.638605921133408),
+          LatLng(30.166540261753887, 31.614734923473776),
+          LatLng(30.15285084473665, 31.626496446620752),
+        ],
+        fillColor: Colors.blue.withOpacity(.2),
+        strokeColor: Colors.white,
+        strokeWidth: 2,
+        holes: const [
+          [
+            LatLng(30.168239898126295, 31.63204275272459),
+            LatLng(30.166998016332194, 31.62576051790542),
+            LatLng(30.162688714799767, 31.62970638440341),
+          ],
+        ],
       ),
     );
   }
@@ -144,6 +172,7 @@ class _HomeState extends State<Home> {
         polylines: lines,
         markers: markers,
         style: nightStyle,
+        polygons: polygons,
         onMapCreated: (controller) {
           _googleMapController = controller;
         },
