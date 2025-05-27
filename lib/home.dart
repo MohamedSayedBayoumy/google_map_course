@@ -25,6 +25,8 @@ class _HomeState extends State<Home> {
 
   Set<Polygon> polygons = {};
 
+  Set<Circle> circles = {};
+
   CameraTargetBounds cameraTargetBounds = CameraTargetBounds(
     LatLngBounds(
       northeast: const LatLng(30.120558505675778, 31.31808364739569),
@@ -48,6 +50,11 @@ class _HomeState extends State<Home> {
       name: "أخصائي تخاطب",
       postion: const LatLng(30.160591618126784, 31.622176312348625),
     ),
+    PlaceModel(
+      id: "4",
+      name: "الجامعة العربية المفتوحة",
+      postion: const LatLng(30.155635964340465, 31.61306319566857),
+    ),
   ];
 
   @override
@@ -67,6 +74,7 @@ class _HomeState extends State<Home> {
           newLocation();
           initLines();
           initPolygon();
+          initCircles();
           setState(() {});
         },
       );
@@ -75,7 +83,7 @@ class _HomeState extends State<Home> {
 
   newLocation() {
     _googleMapController.animateCamera(
-      CameraUpdate.newLatLngZoom(places.first.postion, 15.0),
+      CameraUpdate.newLatLngZoom(places.first.postion, 13.0),
       // CameraUpdate.newLatLng(
       //   const LatLng(30.116758354354467, 31.41720120394772),
       // ),
@@ -131,12 +139,14 @@ class _HomeState extends State<Home> {
   }
 
   void initLines() {
+    final list = places.map((e) => e.postion).toList();
+    list.removeLast();
     lines.add(
       Polyline(
         polylineId: const PolylineId("1"),
         startCap: Cap.roundCap,
         width: 5,
-        points: places.map((e) => e.postion).map((e) => e).toList(),
+        points: list,
       ),
     );
   }
@@ -164,6 +174,19 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void initCircles() {
+    circles.add(
+      Circle(
+        circleId: const CircleId("1"),
+        center: const LatLng(30.155230988122717, 31.612877687767547),
+        fillColor: Colors.green.withOpacity(.2),
+        radius: 800,
+        strokeColor: Colors.white,
+        strokeWidth: 2,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,6 +196,7 @@ class _HomeState extends State<Home> {
         markers: markers,
         style: nightStyle,
         polygons: polygons,
+        circles: circles,
         onMapCreated: (controller) {
           _googleMapController = controller;
         },
