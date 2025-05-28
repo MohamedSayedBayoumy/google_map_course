@@ -9,6 +9,10 @@ abstract class LocationServices {
       permissionStatus == PermissionStatus.denied ||
       permissionStatus == PermissionStatus.deniedForever;
 
+  static isGranted(PermissionStatus permissionStatus) =>
+      permissionStatus == PermissionStatus.granted ||
+      permissionStatus == PermissionStatus.grantedLimited;
+
   static Future<PermissionStatus?> checkLocationServicesAndPermission() async {
     final locationServicesStatus = await checkLocationServerEnabled();
     if (locationServicesStatus == true) {

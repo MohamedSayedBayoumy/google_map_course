@@ -13,12 +13,32 @@ class LiveLocationTrack extends StatefulWidget {
 class _LiveLocationTrackState extends State<LiveLocationTrack> {
   late GoogleMapController _googleMapController;
 
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await LocationServices.checkLocationServicesAndPermission();
-    });
-    super.initState();
+  Set<Marker> markers = {};
+
+  Future<void> getCurrentUasrLocation() async {
+    final request = await LocationServices.checkLocationServicesAndPermission();
+    if (LocationServices.isGranted(request!)) {
+      navigatToUserLocation();
+    }
+  }
+
+  navigatToUserLocation() async {
+    final locationData = await LocationServices.location.getLocation();
+
+    _googleMapController.animateCamera(
+      CameraUpdate.newLatLngZoom(
+        LatLng(locationData.latitude!, locationData.longitude!),
+        12.0,
+      ),
+    );
+
+    markers.add(
+      Marker(
+        markerId: const MarkerId("1"),
+        position: LatLng(locationData.latitude!, locationData.longitude!),
+      ),
+    );
+    setState(() {});
   }
 
   @override
@@ -26,8 +46,10 @@ class _LiveLocationTrackState extends State<LiveLocationTrack> {
     return Scaffold(
       body: GoogleMap(
         zoomControlsEnabled: false,
-        onMapCreated: (controller) {
+        markers: markers,
+        onMapCreated: (controller) async {
           _googleMapController = controller;
+          await getCurrentUasrLocation();
         },
         initialCameraPosition: const CameraPosition(
           zoom: 2.0,
