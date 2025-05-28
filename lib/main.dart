@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'home.dart';
+import 'live_location_track.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Home(),
+      home: const LiveLocationTrack(),
     );
   }
 }

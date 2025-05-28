@@ -6,14 +6,14 @@ import 'model/place_model.dart';
 
 import 'dart:ui' as ui;
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class GoogleMapWidget extends StatefulWidget {
+  const GoogleMapWidget({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<GoogleMapWidget> createState() => _GoogleMapWidgetState();
 }
 
-class _HomeState extends State<Home> {
+class _GoogleMapWidgetState extends State<GoogleMapWidget> {
   late CameraPosition cameraPosition;
 
   late GoogleMapController _googleMapController;
