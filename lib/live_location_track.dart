@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -13,12 +15,15 @@ class LiveLocationTrack extends StatefulWidget {
 class _LiveLocationTrackState extends State<LiveLocationTrack> {
   late GoogleMapController _googleMapController;
 
+  LatLng? currentLatLong;
+
   Set<Marker> markers = {};
 
   Future<void> getCurrentUasrLocation() async {
     final request = await LocationServices.checkLocationServicesAndPermission();
     if (LocationServices.isGranted(request!)) {
-      navigatToUserLocation();
+      // await navigatToUserLocation();
+      addListenToLiveUserLocation();
     }
   }
 
@@ -34,26 +39,76 @@ class _LiveLocationTrackState extends State<LiveLocationTrack> {
 
     markers.add(
       Marker(
-        markerId: const MarkerId("1"),
+        markerId: MarkerId(LocationServices.myLocationKey),
         position: LatLng(locationData.latitude!, locationData.longitude!),
       ),
     );
     setState(() {});
   }
 
+  addListenToLiveUserLocation() {
+    LocationServices.location.onLocationChanged.listen((locationData) {
+      log("New Location");
+
+      currentLatLong = LatLng(locationData.latitude!, locationData.longitude!);
+
+      _googleMapController.animateCamera(
+        CameraUpdate.newLatLngZoom(currentLatLong!, 20.0),
+      );
+
+      markers.add(
+        Marker(
+          markerId: MarkerId(LocationServices.myLocationKey),
+          position: currentLatLong!,
+        ),
+      );
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GoogleMap(
-        zoomControlsEnabled: false,
-        markers: markers,
-        onMapCreated: (controller) async {
-          _googleMapController = controller;
-          await getCurrentUasrLocation();
-        },
-        initialCameraPosition: const CameraPosition(
-          zoom: 2.0,
-          target: LatLng(30.16078301167607, 31.62501376459161),
+      body: Stack(
+        children: [
+          GoogleMap(
+            zoomControlsEnabled: false,
+            markers: markers,
+            style: LocationServices.nightStyle,
+            onMapCreated: (controller) async {
+              _googleMapController = controller;
+              LocationServices.initMapStyle(context);
+
+              await getCurrentUasrLocation();
+            },
+            initialCameraPosition: const CameraPosition(
+              zoom: 2.0,
+              target: LatLng(30.16078301167607, 31.62501376459161),
+            ),
+          ),
+          if (currentLatLong != null) ...[
+            latLongTextWidget(),
+          ]
+        ],
+      ),
+    );
+  }
+
+  Positioned latLongTextWidget() {
+    return Positioned(
+      top: 10.0,
+      left: 10.0,
+      child: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.all(10.0),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(7.0)),
+          ),
+          child: Text(
+            "Lat is :${currentLatLong!.latitude}\nLong is :${currentLatLong!.longitude}",
+            style: const TextStyle(color: Colors.black),
+          ),
         ),
       ),
     );

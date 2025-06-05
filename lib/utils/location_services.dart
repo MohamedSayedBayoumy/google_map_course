@@ -1,9 +1,14 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 
 abstract class LocationServices {
   static Location location = Location();
+
+  static String myLocationKey = "my_location_maraker";
+
+  static String? nightStyle;
 
   static isDenied(PermissionStatus permissionStatus) =>
       permissionStatus == PermissionStatus.denied ||
@@ -55,5 +60,11 @@ abstract class LocationServices {
       log("Location Permission was granted");
       return currentLocationPermission;
     }
+  }
+
+  static initMapStyle(BuildContext context) async {
+    nightStyle = await DefaultAssetBundle.of(context)
+        .loadString('assets/map_style.json');
+    // _googleMapController.setMapStyle(nightStyle); // controller لل init لانك كدا استخدمت و لازم نعمل onMapCreate اذا استخدمت الطريقة دي لازم تنده النافنكش كلها في ال
   }
 }
