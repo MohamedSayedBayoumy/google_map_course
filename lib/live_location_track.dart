@@ -36,18 +36,19 @@ class _LiveLocationTrackState extends State<LiveLocationTrack> {
         12.0,
       ),
     );
-
+    var icon = await LocationServices.iconMap();
     markers.add(
       Marker(
         markerId: MarkerId(LocationServices.myLocationKey),
         position: LatLng(locationData.latitude!, locationData.longitude!),
+        icon: icon,
       ),
     );
     setState(() {});
   }
 
   addListenToLiveUserLocation() {
-    LocationServices.location.onLocationChanged.listen((locationData) {
+    LocationServices.location.onLocationChanged.listen((locationData) async {
       log("New Location");
 
       currentLatLong = LatLng(locationData.latitude!, locationData.longitude!);
@@ -55,15 +56,24 @@ class _LiveLocationTrackState extends State<LiveLocationTrack> {
       _googleMapController.animateCamera(
         CameraUpdate.newLatLngZoom(currentLatLong!, 20.0),
       );
+      var icon = await LocationServices.iconMap();
 
       markers.add(
         Marker(
           markerId: MarkerId(LocationServices.myLocationKey),
           position: currentLatLong!,
+          icon: icon,
         ),
       );
       setState(() {});
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    LocationServices.initMapStyle();
+    LocationServices.locationSetting();
   }
 
   @override
@@ -77,7 +87,6 @@ class _LiveLocationTrackState extends State<LiveLocationTrack> {
             style: LocationServices.nightStyle,
             onMapCreated: (controller) async {
               _googleMapController = controller;
-              LocationServices.initMapStyle(context);
 
               await getCurrentUasrLocation();
             },
