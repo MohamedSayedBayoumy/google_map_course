@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'utils/location_services.dart';
+import 'common/services/location_services.dart';
 
 class LiveLocationTrack extends StatefulWidget {
   const LiveLocationTrack({super.key});
@@ -20,11 +20,9 @@ class _LiveLocationTrackState extends State<LiveLocationTrack> {
   Set<Marker> markers = {};
 
   Future<void> getCurrentUasrLocation() async {
-    final request = await LocationServices.checkLocationServicesAndPermission();
-    if (LocationServices.isGranted(request!)) {
-      // await navigatToUserLocation();
-      addListenToLiveUserLocation();
-    }
+    await LocationServices.checkLocationServicesAndPermission();
+    // await navigatToUserLocation();
+    addListenToLiveUserLocation();
   }
 
   navigatToUserLocation() async {

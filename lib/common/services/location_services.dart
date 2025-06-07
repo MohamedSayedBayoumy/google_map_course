@@ -2,11 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_map/common/errors/google_map_exception.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'dart:ui' as ui;
 
-import '../main.dart';
+import '../../main.dart';
 
 abstract class LocationServices {
   static Location location = Location();
@@ -25,47 +26,37 @@ abstract class LocationServices {
       permissionStatus == PermissionStatus.granted ||
       permissionStatus == PermissionStatus.grantedLimited;
 
-  static Future<PermissionStatus?> checkLocationServicesAndPermission() async {
-    final locationServicesStatus = await checkLocationServerEnabled();
-    if (locationServicesStatus == true) {
-      return checkLocationPermission();
+  static Future<void> checkLocationServicesAndPermission() async {
+    try {
+      await checkLocationServerEnabled();
+      await checkLocationPermission();
+    } on GoogleMapServicesException catch (e) {
+      log("GoogleMap Services Exception");
+    } on GoogleMapPermissionException catch (e) {
+      log("GoogleMap Permission Exception");
+    } catch (e) {
+      log("Exception while checkLocationServicesAndPermission");
     }
-    return null;
   }
 
-  static Future<bool> checkLocationServerEnabled() async {
+  static Future<void> checkLocationServerEnabled() async {
     var currentServicesStatus = await location.serviceEnabled();
     if (currentServicesStatus == false) {
       currentServicesStatus = await location.requestService();
 
-      if (currentServicesStatus == true) {
-        log("Location Server become enabled");
-        return true;
-      } else {
-        log("Location Server become disabled");
-        return false;
+      if (currentServicesStatus == false) {
+        throw GoogleMapServicesException();
       }
-    } else {
-      log("Location Server was enabled");
-
-      return true;
     }
   }
 
-  static Future<PermissionStatus> checkLocationPermission() async {
+  static Future<void> checkLocationPermission() async {
     var currentLocationPermission = await location.hasPermission();
     if (isDenied(currentLocationPermission)) {
       currentLocationPermission = await location.requestPermission();
-      if (!isDenied(currentLocationPermission)) {
-        log("Location Permission become granted");
-        return currentLocationPermission;
-      } else {
-        log("Location Permission become $currentLocationPermission");
-        return currentLocationPermission;
+      if (isDenied(currentLocationPermission)) {
+        throw GoogleMapPermissionException();
       }
-    } else {
-      log("Location Permission was granted");
-      return currentLocationPermission;
     }
   }
 
@@ -104,5 +95,9 @@ abstract class LocationServices {
         converNewImageDataAfterToDataByte!.buffer.asUint8List();
 
     return unit8listOfNewImage!;
+  }
+
+  static Future<LocationData> getUserLocation() async {
+    return await location.getLocation();
   }
 }
