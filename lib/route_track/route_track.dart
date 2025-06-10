@@ -17,11 +17,6 @@ class _RouteTrackScreenState extends State<RouteTrackScreen> {
       const CameraPosition(target: LatLng(0, 0));
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return GoogleMap(
       zoomControlsEnabled: false,

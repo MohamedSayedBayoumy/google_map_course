@@ -4,7 +4,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyBgyoWmEFgyseqx5jLLju8nexfk43t90K4"/>
+               android:value="AIzaSyBgyoWmEFgyseqx5jLLju8nexfk43t90K4"/>  <!-- My First Project with id => linen-compiler-360410 -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
