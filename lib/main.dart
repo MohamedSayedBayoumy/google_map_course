@@ -31,3 +31,23 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
+// LatLngBounds getLatLngBounds(List<LatLng> points) {
+//     var southWestLatitude = points.first.latitude;
+//     var southWestLongitude = points.first.longitude;
+//     var northEastLatitude = points.first.latitude;
+//     var northEastLongitude = points.first.longitude;
+
+//     for (var point in points) {
+//       southWestLatitude = min(southWestLatitude, point.latitude);
+//       southWestLongitude = min(southWestLongitude, point.longitude);
+//       northEastLatitude = max(northEastLatitude, point.latitude);
+//       northEastLongitude = max(northEastLongitude, point.longitude);
+//     }
+
+//     return LatLngBounds(
+//         southwest: LatLng(southWestLatitude, southWestLongitude),
+//         northeast: LatLng(northEastLatitude, northEastLongitude));
+//   }
+
